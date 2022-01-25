@@ -1,0 +1,92 @@
+{{define "function"}}
+{{- $f := .}}
+
+func {{.TestName}}(t *testing.T) {
+	{{- with .Receiver}}
+		{{- if .IsStruct}}
+			{{- if .Fields}}
+				type fields struct {
+				{{- range .Fields}}
+					{{Field .}} {{.Type}}
+				{{- end}}
+				}
+
+			{{end}}
+		{{end}}
+	{{end}}
+	{{- if .TestParameters}}
+	type args struct {
+		{{- range .TestParameters}}
+				{{Param .}} {{.Type}}
+		{{- end}}
+	}
+
+	{{end}}
+	testCases := []struct {
+		name string
+		{{- with .Receiver}}
+			{{- if and .IsStruct .Fields}}
+				fields fields
+			{{- else}}
+				{{Receiver .}} {{.Type}}
+			{{- end}}
+		{{- end}}
+		{{- if .TestParameters}}
+			args args
+		{{- end}}
+		{{- range .TestResults}}
+			{{Want .}} {{.Type}}
+		{{- end}}
+		{{- if .ReturnsError}}
+			wantErr error
+		{{- end}}
+	}{
+		// TODO: Add test cases.
+	}
+
+	for {{if (or .Subtests (not .IsNaked))}} _, testCase := {{end}} range testCases {
+        {{- if .Subtests }}t.Run(testCase.name, func(t *testing.T) { {{- end -}}
+			{{- with .Receiver}}
+				{{- if .IsStruct}}
+					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
+					{{- range .Fields}}
+						{{.Name}}: testCase.fields.{{Field .}},
+					{{- end}}
+					}
+				{{- end}}
+			{{- end}}
+			{{- range .Parameters}}
+				{{- if .IsWriter}}
+					{{Param .}} := &bytes.Buffer{}
+				{{- end}}
+			{{- end}}
+			{{- if and (not .OnlyReturnsError) (not .OnlyReturnsOneValue) }}
+				{{template "results" $f}} {{template "call" $f}}
+			{{- end}}
+			{{- if .ReturnsError}}
+				if {{if .OnlyReturnsError}} err := {{template "call" $f}}; {{end}} !errors.Is(err, testCase.wantErr) {
+					t.Errorf("{{template "message" $f}} error = %v, wantErr %v", {{template "inputs" $f}} err, testCase.wantErr)
+					{{- if .TestResults}}
+
+						{{if .Subtests }}return{{else}}continue{{end}}
+					{{- end}}
+				}
+			{{- end}}
+			{{- range .TestResults}}
+				{{- if .IsWriter}}
+					if {{Got .}} := {{Param .}}.String(); {{Got .}} != testCase.{{Want .}} {
+				{{- else if .IsBasicType}}
+					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != testCase.{{Want .}} {
+				{{- else}}
+					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} !cmp.Equal({{Got .}}, testCase.{{Want .}}) {
+				{{- end}}
+				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v{{ if (not ( or .IsWriter .IsBasicType))}}\ndiff=%s{{ end }}", {{template "inputs" $f}} {{Got .}}, testCase.{{Want .}}
+				    {{- if (not ( or .IsWriter .IsBasicType))}},
+						cmp.Diff({{Got .}}, testCase.{{Want .}}){{ end }})
+				}
+			{{- end}}
+		{{- if .Subtests }} }) {{- end -}}
+	}
+}
+
+{{end}}
