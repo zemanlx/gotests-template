@@ -23,3 +23,7 @@ Clone this repository and refer it in VS Code settings:
     "-template_dir=/path/to/this/repo/gotests-template/cmp-linted"
   ]
 ```
+
+For Goland you may need to use *external tool* settings to pass `-template_dir`
+option as kindly described in [gotests issue
+161](https://github.com/cweill/gotests/issues/161#issuecomment-848329955).
