@@ -78,7 +78,8 @@ func {{.TestName}}(t *testing.T) {
 				{{- else if .IsBasicType}}
 					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != testCase.{{Want .}} {
 				{{- else}}
-					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} diff := cmp.Diff({{Got .}}, testCase.{{Want .}}); diff != "" {
+					{{- if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}{{end}}
+					if diff := cmp.Diff({{Got .}}, testCase.{{Want .}}); diff != "" {
 				{{- end}}
 				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}}{{end}}diff (-got +want)\n%s", diff)
 				}
