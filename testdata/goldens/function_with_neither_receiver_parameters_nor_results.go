@@ -3,12 +3,12 @@ package testdata
 import "testing"
 
 func TestFoo1(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name string
 	}{
 		// TODO: Add test cases.
 	}
-	for range tests {
+	for range testCases {
 		Foo1()
 	}
 }

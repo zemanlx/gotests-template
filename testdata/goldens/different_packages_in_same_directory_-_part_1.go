@@ -1,28 +1,33 @@
 package bar
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestBar_Bar(t *testing.T) {
 	type fields struct {
 		Foo string
 	}
+
 	type args struct {
 		s string
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name    string
 		fields  fields
 		args    args
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
+	for _, testCase := range testCases {
 		b := &Bar{
-			Foo: tt.fields.Foo,
+			Foo: testCase.fields.Foo,
 		}
-		if err := b.Bar(tt.args.s); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.Bar(testCase.args.s); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Bar.Bar() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }

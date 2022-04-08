@@ -1,30 +1,35 @@
 package testdata
 
 import (
-	"reflect"
+	"errors"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestFooFilter(t *testing.T) {
 	type args struct {
 		strs []string
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name    string
 		args    args
 		want    []*Bar
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		got, err := FooFilter(tt.args.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. FooFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+	for _, testCase := range testCases {
+		got, err := FooFilter(testCase.args.strs)
+		if !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. FooFilter() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
+
 			continue
 		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. FooFilter() = %v, want %v", tt.name, got, tt.want)
+
+		if diff := cmp.Diff(got, testCase.want); diff != "" {
+			t.Errorf("%q. FooFilter() diff (-got +want)\n%s", testCase.name, diff)
 		}
 	}
 }
@@ -33,18 +38,18 @@ func TestBar_BarFilter(t *testing.T) {
 	type args struct {
 		i interface{}
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name    string
 		b       *Bar
 		args    args
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.BarFilter(tt.args.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+	for _, testCase := range testCases {
+		if err := testCase.b.BarFilter(testCase.args.i); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Bar.BarFilter() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }

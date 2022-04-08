@@ -3,23 +3,23 @@ package testdata
 import "testing"
 
 func Test_main(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name string
 	}{
 		// TODO: Add test cases.
 	}
-	for range tests {
+	for range testCases {
 		main()
 	}
 }
 
 func Test_do(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name string
 	}{
 		// TODO: Add test cases.
 	}
-	for range tests {
+	for range testCases {
 		do()
 	}
 }

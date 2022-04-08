@@ -1,23 +1,27 @@
 package testdata
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestFoo5(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name    string
 		want    string
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
+	for _, testCase := range testCases {
 		got, err := Foo5()
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo5() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Foo5() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
+
 			continue
 		}
-		if got != tt.want {
-			t.Errorf("%q. Foo5() = %v, want %v", tt.name, got, tt.want)
+		if got != testCase.want {
+			t.Errorf("%q. Foo5() = %v, want %v", testCase.name, got, tt.want)
 		}
 	}
 }

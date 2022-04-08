@@ -27,16 +27,17 @@ func TestBar200(t *testing.T) {
 	type args struct {
 		t types.Type
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name string
 		args args
 		want string
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		if got := Bar200(tt.args.t); got != tt.want {
-			t.Errorf("%q. Bar200() = %v, want %v", tt.name, got, tt.want)
+	for _, testCase := range testCases {
+		if got := Bar200(testCase.args.t); got != testCase.want {
+			t.Errorf("%q. Bar200() = %v, want %v", testCase.name, got, tt.want)
 		}
 	}
 }

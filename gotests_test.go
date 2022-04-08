@@ -32,7 +32,6 @@ func TestGenerateTests(t *testing.T) {
 		parallel           bool
 		named              bool
 		importer           types.Importer
-		templateDir        string
 		template           string
 		templateParamsPath string
 		templateData       [][]byte
@@ -565,14 +564,6 @@ func TestGenerateTests(t *testing.T) {
 			wantFile: "testdata/goldens/existing_test_file_with_multiple_imports.go",
 		},
 		{
-			name: "Entire testdata directory",
-			args: args{
-				srcPath:  `testdata/`,
-				template: "testify",
-			},
-			wantMultipleTests: true,
-		},
-		{
 			name: "Different packages in same directory - part 1",
 			args: args{
 				srcPath: `testdata/mixedpkg/bar.go`,
@@ -693,6 +684,15 @@ func TestGenerateTests(t *testing.T) {
 			wantFile: "testdata/goldens/naked_function_without_subtests_with_parallel.go",
 		},
 		{
+			name: "Test interface embedding",
+			args: args{
+				srcPath: `testdata/undefinedtypes/interface_embedding.go`,
+			},
+			wantFile:    "testdata/goldens/interface_embedding.go",
+			wantNoTests: !versionGreaterOrEqualThan("go1.11"),
+			wantErr:     !versionGreaterOrEqualThan("go1.11"),
+		},
+		{
 			name: "named_named=on",
 			args: args{
 				srcPath: "testdata/test038.go",
@@ -728,6 +728,7 @@ func TestGenerateTests(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var params map[string]interface{}
 			var err error
+			var want string
 			if tt.args.templateParamsPath != "" {
 				params, err = loadExternalJsonFile(tt.args.templateParamsPath)
 				if err != nil {
@@ -735,15 +736,6 @@ func TestGenerateTests(t *testing.T) {
 					return
 				}
 			}
-
-			want := ""
-			if tt.wantFile != "" {
-				want = mustReadAndFormatGoFile(t, tt.wantFile)
-			}
-
-			// if tt.args.templateDir == "" {
-			// 	tt.args.templateDir = "cmp-linted"
-			// }
 			gts, err := gotests.GenerateTests(tt.args.srcPath, &gotests.Options{
 				Only:           tt.args.only,
 				Exclude:        tt.args.excl,
@@ -753,7 +745,7 @@ func TestGenerateTests(t *testing.T) {
 				Parallel:       tt.args.parallel,
 				Named:          tt.args.named,
 				Importer:       func() types.Importer { return tt.args.importer },
-				TemplateDir:    tt.args.templateDir,
+				TemplateDir:    "cmp-linted",
 				Template:       tt.args.template,
 				TemplateParams: params,
 				TemplateData:   tt.args.templateData,
@@ -779,6 +771,9 @@ func TestGenerateTests(t *testing.T) {
 				if err := ioutil.WriteFile(tt.wantFile, []byte(got), 0o644); err != nil {
 					t.Fatalf("ioutil.WriteFile %s: %v", tt.wantFile, err)
 				}
+			}
+			if tt.wantFile != "" {
+				want = mustReadAndFormatGoFile(t, tt.wantFile)
 			}
 			if got != want {
 				t.Errorf("%q. GenerateTests(%v) = \n%v, want \n%v", tt.name, tt.args.srcPath, got, want)

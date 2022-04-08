@@ -3,14 +3,14 @@ package testdata
 import "testing"
 
 func Test_main(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name string
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			main()
 		})
@@ -18,14 +18,14 @@ func Test_main(t *testing.T) {
 }
 
 func Test_do(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name string
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			do()
 		})

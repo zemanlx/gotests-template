@@ -1,51 +1,54 @@
 package testdata
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestBook_Open(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name    string
 		b       *Book
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
+	for _, testCase := range testCases {
 		b := &Book{}
-		if err := b.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Book.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := b.Open(); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Book.Open() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }
 
 func Test_door_Open(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name    string
 		d       *door
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
+	for _, testCase := range testCases {
 		d := &door{}
-		if err := d.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. door.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := d.Open(); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. door.Open() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }
 
 func Test_xml_Open(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name    string
 		x       *xml
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
+	for _, testCase := range testCases {
 		x := &xml{}
-		if err := x.Open(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. xml.Open() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := x.Open(); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. xml.Open() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }

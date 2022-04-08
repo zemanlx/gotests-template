@@ -13,15 +13,15 @@ package testdata
 import "testing"
 
 func TestBeforeComment(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name string
 		want string
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		if got := BeforeComment(); got != tt.want {
-			t.Errorf("%q. BeforeComment() = %v, want %v", tt.name, got, tt.want)
+	for _, testCase := range testCases {
+		if got := BeforeComment(); got != testCase.want {
+			t.Errorf("%q. BeforeComment() = %v, want %v", testCase.name, got, tt.want)
 		}
 	}
 }

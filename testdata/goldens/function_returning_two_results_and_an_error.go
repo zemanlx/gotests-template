@@ -1,34 +1,39 @@
 package testdata
 
 import (
-	"reflect"
+	"errors"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestFoo25(t *testing.T) {
 	type args struct {
 		in0 interface{}
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name    string
 		args    args
 		want    string
 		want1   []byte
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		got, got1, err := Foo25(tt.args.in0)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo25() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+	for _, testCase := range testCases {
+		got, got1, err := Foo25(testCase.args.in0)
+		if !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Foo25() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
+
 			continue
 		}
-		if got != tt.want {
-			t.Errorf("%q. Foo25() got = %v, want %v", tt.name, got, tt.want)
+		if got != testCase.want {
+			t.Errorf("%q. Foo25() got = %v, want %v", testCase.name, got, tt.want)
 		}
-		if !reflect.DeepEqual(got1, tt.want1) {
-			t.Errorf("%q. Foo25() got1 = %v, want %v", tt.name, got1, tt.want1)
+
+		if diff := cmp.Diff(got1, testCase.want1); diff != "" {
+			t.Errorf("%q. Foo25() diff (-got1 +want1)\n%s", testCase.name, diff)
 		}
 	}
 }

@@ -1,19 +1,22 @@
 package testdata
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestTestReceiver_FooMethod(t *testing.T) {
-	tests := []struct {
+	testCases := []struct {
 		name    string
 		tr      *TestReceiver
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
+	for _, testCase := range testCases {
 		tr := &TestReceiver{}
-		if err := tr.FooMethod(); (err != nil) != tt.wantErr {
-			t.Errorf("%q. TestReceiver.FooMethod() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+		if err := tr.FooMethod(); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. TestReceiver.FooMethod() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }

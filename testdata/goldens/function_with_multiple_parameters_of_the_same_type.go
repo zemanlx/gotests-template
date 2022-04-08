@@ -8,16 +8,17 @@ func TestFoo19(t *testing.T) {
 		in2 string
 		in3 string
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name string
 		args args
 		want string
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		if got := Foo19(tt.args.in1, tt.args.in2, tt.args.in3); got != tt.want {
-			t.Errorf("%q. Foo19() = %v, want %v", tt.name, got, tt.want)
+	for _, testCase := range testCases {
+		if got := Foo19(testCase.args.in1, testCase.args.in2, testCase.args.in3); got != testCase.want {
+			t.Errorf("%q. Foo19() = %v, want %v", testCase.name, got, tt.want)
 		}
 	}
 }

@@ -12,8 +12,8 @@ func {{.TestName}}(t *testing.T) {
 				}
 
 			{{end}}
-		{{end}}
-	{{end}}
+		{{- end}}
+	{{- end}}
 	{{- if .TestParameters}}
 	type args struct {
 		{{- range .TestParameters}}
@@ -22,8 +22,8 @@ func {{.TestName}}(t *testing.T) {
 	}
 
 	{{end}}
-	testCases := []struct {
-		name string
+	testCases := {{ if .Named}}map[string]struct{{else}}[]struct{{end}} {
+		{{ if (not .Named)}}name string{{end}}
 		{{- with .Receiver}}
 			{{- if and .IsStruct .Fields}}
 				fields fields
@@ -43,9 +43,13 @@ func {{.TestName}}(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
-
-	for {{if (or .Subtests (not .IsNaked))}} _, testCase := {{end}} range testCases {
-        {{- if .Subtests }}t.Run(testCase.name, func(t *testing.T) { {{- end -}}
+	for {{if (or .Subtests (not .IsNaked))}} {{if .Named}}name{{else}}_{{end}}, testCase := {{end}} range testCases {
+		{{- if .Subtests}}
+		{{- if .Parallel}}testCase := testCase;{{end}}
+		{{- if and .Parallel .Named}}name := name;{{ end }}
+		t.Run({{if .Named}}name{{else}}testCase.name{{end}}, func(t *testing.T) {
+			{{- if .Parallel}}t.Parallel(){{end}}
+		{{- end}}
 			{{- with .Receiver}}
 				{{- if .IsStruct}}
 					{{Receiver .}} := {{if .Type.IsStar}}&{{end}}{{.Type.Value}}{
@@ -75,13 +79,15 @@ func {{.TestName}}(t *testing.T) {
 			{{- range .TestResults}}
 				{{- if .IsWriter}}
 					if {{Got .}} := {{Param .}}.String(); {{Got .}} != testCase.{{Want .}} {
+						t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
 				{{- else if .IsBasicType}}
 					if {{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}; {{end}} {{Got .}} != testCase.{{Want .}} {
+						t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}} {{end}}= %v, want %v", {{template "inputs" $f}} {{Got .}}, tt.{{Want .}})
 				{{- else}}
-					{{- if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}{{end}}
+					{{if $f.OnlyReturnsOneValue}}{{Got .}} := {{template "inline" $f}}{{end}}
 					if diff := cmp.Diff({{Got .}}, testCase.{{Want .}}); diff != "" {
+						t.Errorf("{{template "message" $f}} diff (-{{if $f.ReturnsMultiple}}{{Got .}}{{else}}got{{end}} +{{if $f.ReturnsMultiple}}{{Want .}}{{else}}want{{end}})\n%s", {{template "inputs" $f}} diff)
 				{{- end}}
-				t.Errorf("{{template "message" $f}} {{if $f.ReturnsMultiple}}{{Got .}}{{end}}diff (-got +want)\n%s", diff)
 				}
 			{{- end}}
 		{{- if .Subtests }} }) {{- end -}}

@@ -1,8 +1,10 @@
 package testdata
 
 import (
-	"reflect"
+	"errors"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestBarBar100(t *testing.T) {
@@ -49,22 +51,25 @@ func TestFoo100(t *testing.T) {
 	type args struct {
 		strs []string
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name    string
 		args    args
 		want    []*Bar
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		got, err := Foo100(tt.args.strs)
-		if (err != nil) != tt.wantErr {
-			t.Errorf("%q. Foo100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+	for _, testCase := range testCases {
+		got, err := Foo100(testCase.args.strs)
+		if !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Foo100() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
+
 			continue
 		}
-		if !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo100() = %v, want %v", tt.name, got, tt.want)
+
+		if diff := cmp.Diff(got, testCase.want); diff != "" {
+			t.Errorf("%q. Foo100() diff (-got +want)\n%s", testCase.name, diff)
 		}
 	}
 }
@@ -73,18 +78,18 @@ func TestBar_Bar100(t *testing.T) {
 	type args struct {
 		i interface{}
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name    string
 		b       *Bar
 		args    args
-		wantErr bool
+		wantErr error
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		b := &Bar{}
-		if err := b.Bar100(tt.args.i); (err != nil) != tt.wantErr {
-			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+	for _, testCase := range testCases {
+		if err := testCase.b.Bar100(testCase.args.i); !errors.Is(err, testCase.wantErr) {
+			t.Errorf("%q. Bar.Bar100() error = %v, wantErr %v", testCase.name, err, testCase.wantErr)
 		}
 	}
 }
@@ -93,16 +98,17 @@ func Test_baz100(t *testing.T) {
 	type args struct {
 		f *float64
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name string
 		args args
 		want float64
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		if got := baz100(tt.args.f); got != tt.want {
-			t.Errorf("%q. baz100() = %v, want %v", tt.name, got, tt.want)
+	for _, testCase := range testCases {
+		if got := baz100(testCase.args.f); got != testCase.want {
+			t.Errorf("%q. baz100() = %v, want %v", testCase.name, got, tt.want)
 		}
 	}
 }

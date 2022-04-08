@@ -2,24 +2,27 @@ package testdata
 
 import (
 	ht "html/template"
-	"reflect"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestFoo22(t *testing.T) {
 	type args struct {
 		t *ht.Template
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name string
 		args args
 		want *ht.Template
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		if got := Foo22(tt.args.t); !reflect.DeepEqual(got, tt.want) {
-			t.Errorf("%q. Foo22() = %v, want %v", tt.name, got, tt.want)
+	for _, testCase := range testCases {
+		got := Foo22(testCase.args.t)
+		if diff := cmp.Diff(got, testCase.want); diff != "" {
+			t.Errorf("%q. Foo22() diff (-got +want)\n%s", testCase.name, diff)
 		}
 	}
 }

@@ -6,13 +6,14 @@ func TestFoo3(t *testing.T) {
 	type args struct {
 		s string
 	}
-	tests := []struct {
+
+	testCases := []struct {
 		name string
 		args args
 	}{
 		// TODO: Add test cases.
 	}
-	for _, tt := range tests {
-		Foo3(tt.args.s)
+	for _, testCase := range testCases {
+		Foo3(testCase.args.s)
 	}
 }
