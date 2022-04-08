@@ -16,6 +16,12 @@ Goland.
 
 ## Usage
 
+Update your local binary of `gotests` to latests `master` version
+
+```bash
+go install github.com/cweill/gotests/gotests@master
+```
+
 Clone this repository and refer it in VS Code settings:
 
 ```json
